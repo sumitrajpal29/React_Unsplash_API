@@ -37,7 +37,7 @@ function App() {
           {Time}
         </p>
       </header>
-      <ImageList />
+      {/* <ImageList /> */}
     </div>
   );
 }
