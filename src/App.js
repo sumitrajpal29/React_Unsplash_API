@@ -1,10 +1,14 @@
 import './App.css';
 import { useEffect, useState } from 'react';
+import ImageList from './ImageList';
 
 function App() {
   const [image, setImage] = useState('');
+  // const [imageList, setImageList] = useState([]);
+
   useEffect(() => {
-    fetchRandomImage();
+    setImage('https://images.unsplash.com/photo-1709913472012-a0c243ca6cc9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODQ2OTh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MTE3NDA3MzZ8&ixlib=rb-4.0.3&q=80&w=1080');
+    // fetchRandomImage();
   }, []);
 
   const fetchRandomImage = () => {
@@ -28,19 +32,12 @@ function App() {
   return (
     <div className="App" style={{ backgroundImage: `url(${image})` }}>
       <header className="App-header">
-        {/* <img src={image} className="App-logo" alt="logo" /> */}
+        <h1>Welcome to your serenity...</h1>
         <p>
           {Time}
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
+      <ImageList />
     </div>
   );
 }
