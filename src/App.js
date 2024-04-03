@@ -1,4 +1,3 @@
-import './App.css';
 import { useEffect, useState } from 'react';
 import ImageList from './ImageList';
 
@@ -30,14 +29,15 @@ function App() {
 
   const Time = Date();
   return (
-    <div className="App" style={{ backgroundImage: `url(${image})` }}>
-      <header className="App-header">
-        <h1>Welcome to your serenity...</h1>
+    //style={{ backgroundImage: `url(${image})` }}
+    <div className='bg-slate-700'>
+      <header className='bg-black'>
+        <h1 className='underline text-green-700 text-center text-3xl'>Welcome to your serenity...</h1>
         <p>
           {Time}
         </p>
       </header>
-      {/* <ImageList /> */}
+      <ImageList />
     </div>
   );
 }
