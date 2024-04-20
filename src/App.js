@@ -1,20 +1,49 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import ImageList from './ImageList';
 import { useViewport } from "react-viewport-hooks";
-
+import { Form } from 'react-router-dom';
+import SearchBar from './SearchBar';
 
 function App() {
   const [image, setImage] = useState('')
   // const [imageList, setImageList] = useState([])
   const [vw, setVW] = useState('landscape')
+  const largeImage = useRef(image);
   // const vw = useViewport() < 768 ? 'portrait' : 'landscape'
+  //----------------------------------------------------------------------
+  const [images, setImages] = useState([]);
+  const API_URL = 'https://api.unsplash.com'
+  const API_KEY = process.env.REACT_APP_UNSPLASH_API_KEY
+  // const [vw, setVW] = useState('landscape');
+  // vw = useViewport() < 768 ? 'portrait' : 'landscape'
+  const VW = useViewport();
+  const [method, setMethod] = useState('topics/wallpapers/photos?')
+  const Time = Date();
+  const [searchInput, setSearchInput] = useState('');
 
-  useEffect(() => {
+  function search() {
+    if (searchInput === '')
+      return
 
-    // vw=
-    // setImage('https://images.unsplash.com/photo-1709913472012-a0c243ca6cc9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODQ2OTh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MTE3NDA3MzZ8&ixlib=rb-4.0.3&q=80&w=1080');
-    // fetchRandomImage();
-  }, []);
+    setMethod('search/photos?page=1&query=wallpaper&')
+    fetchImages();
+  }
+
+
+  function checkVW() {
+    if (VW < 740)
+      setVW('portrait')
+  }
+
+
+  // ---------------------------------------------------------
+
+  // useEffect(() => {
+
+  //   // vw=
+  //   // setImage('https://images.unsplash.com/photo-1709913472012-a0c243ca6cc9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODQ2OTh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MTE3NDA3MzZ8&ixlib=rb-4.0.3&q=80&w=1080');
+  //   // fetchRandomImage();
+  // }, []);
 
   const fetchRandomImage = () => {
     fetch(`https://api.unsplash.com/photos/random?client_id=${process.env.REACT_APP_UNSPLASH_API_KEY}&orientation=landscape`)
@@ -33,18 +62,42 @@ function App() {
       });
   };
 
-  
+  const scroll = () => {
+    largeImage.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
-  const Time = Date();
+  // function search(input) {
+  //   setMethod('search/photos/${input}')
+  // }
+
+  function fetchImages() {
+    fetch(`${API_URL}/${method}client_id=${API_KEY}&orientation=${vw}`)
+      .then((response) => response.json())
+      .then((data) => { setImages(data); setImage(data[0].urls.regular); console.log("success", data); })
+      .catch((error) => console.log('Error in fetching images:', error))
+  }
+
+
+  useEffect(() => {
+    checkVW();
+    console.log(vw);
+    fetchImages();
+
+  }, [vw])
+
   return (
     //style={{ backgroundImage: `url(${image})` }}
     <div className='bg-slate-700' style={{ backgroundColor: 'black' }}>
       <header className='bg-black'>
         <h1 className='underline text-green-700 text-center text-3xl'>Welcome to your serenity...</h1>
-        <p>
+        {/* <p>
           {Time}
-        </p>
+        </p> */}
       </header>
+      <SearchBar search={search} setSearchInput={setSearchInput} />
+      <div ref={largeImage}>
+        <img src={image} />
+      </div>
 
       {/* <div class="relative inline-block text-left">
         <div>
@@ -65,7 +118,7 @@ function App() {
       </div> */}
 
 
-      <ImageList setBG={setImage} vw={vw} />
+      <ImageList setBG={setImage} images={images} vw={vw} scroll={scroll} />
     </div>
   );
 }
