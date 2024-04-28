@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react"
 import Grid from "./Grid";
-import { useViewport } from "react-viewport-hooks";
 
 export default function ImageList({ setBG, scroll, images }) {
 

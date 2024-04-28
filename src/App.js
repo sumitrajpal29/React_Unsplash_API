@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import ImageList from './ImageList';
 import { useViewport } from "react-viewport-hooks";
-import { Form } from 'react-router-dom';
 import SearchBar from './SearchBar';
 
 function App() {
@@ -18,15 +17,12 @@ function App() {
   // vw = useViewport() < 768 ? 'portrait' : 'landscape'
   const VW = useViewport();
   const [method, setMethod] = useState('topics/wallpapers/photos?')
-  const Time = Date();
-  const [searchInput, setSearchInput] = useState('');
+  // const Time = Date();
+  const [searching, setSearching] = useState(false);
 
-  function search() {
-    if (searchInput === '')
-      return
-
-    setMethod('search/photos?page=1&query=wallpaper&')
-    fetchImages();
+  function search(value) {
+    setMethod('search/photos?page=1&query=girls&')
+    setSearching(true);
   }
 
 
@@ -45,22 +41,22 @@ function App() {
   //   // fetchRandomImage();
   // }, []);
 
-  const fetchRandomImage = () => {
-    fetch(`https://api.unsplash.com/photos/random?client_id=${process.env.REACT_APP_UNSPLASH_API_KEY}&orientation=landscape`)
-      .then(response => response.json())
-      .then(data => {
-        if (data.urls && data.urls.regular) {
-          setImage(data.urls.regular);
-          console.log("workingggg");
-        }
-        else {
-          console.log('Invalid response from unsplash API:', data);
-        }
-      })
-      .catch(err => {
-        console.log('Error fetching random image:', err);
-      });
-  };
+  // const fetchRandomImage = () => {
+  //   fetch(`https://api.unsplash.com/photos/random?client_id=${process.env.REACT_APP_UNSPLASH_API_KEY}&orientation=landscape`)
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       if (data.urls && data.urls.regular) {
+  //         setImage(data.urls.regular);
+  //         console.log("workingggg");
+  //       }
+  //       else {
+  //         console.log('Invalid response from unsplash API:', data);
+  //       }
+  //     })
+  //     .catch(err => {
+  //       console.log('Error fetching random image:', err);
+  //     });
+  // };
 
   const scroll = () => {
     largeImage.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -70,10 +66,20 @@ function App() {
   //   setMethod('search/photos/${input}')
   // }
 
-  function fetchImages() {
+  function fetchImages(searching) {
     fetch(`${API_URL}/${method}client_id=${API_KEY}&orientation=${vw}`)
       .then((response) => response.json())
-      .then((data) => { setImages(data); setImage(data[0].urls.regular); console.log("success", data); })
+      .then((data) => {
+        if (searching) {
+          // console.log(data.results);
+          setImages(data.results);
+        }
+        else {
+          setImages(data)
+        }
+        // setImage(images[0].urls.regular);
+        console.log("success", data);
+      })
       .catch((error) => console.log('Error in fetching images:', error))
   }
 
@@ -83,21 +89,21 @@ function App() {
     console.log(vw);
     fetchImages();
 
-  }, [vw])
+  }, [])
 
   return (
     //style={{ backgroundImage: `url(${image})` }}
-    <div className='bg-slate-700' style={{ backgroundColor: 'black' }}>
+    <div className='bg-slate-700' style={{ backgroundColor: 'white' }}>
       <header className='bg-black'>
         <h1 className='underline text-green-700 text-center text-3xl'>Welcome to your serenity...</h1>
         {/* <p>
           {Time}
         </p> */}
       </header>
-      <SearchBar search={search} setSearchInput={setSearchInput} />
-      <div ref={largeImage}>
+      <SearchBar search={search} />
+      {/* <div ref={largeImage}>
         <img src={image} />
-      </div>
+      </div> */}
 
       {/* <div class="relative inline-block text-left">
         <div>
